@@ -2,10 +2,8 @@ package com.waiXiao.controller;
 
 
 import com.alibaba.druid.util.StringUtils;
-import com.alibaba.fastjson.JSON;
 import com.waiXiao.common.utils.BeanToMap;
 import com.waiXiao.common.utils.FileTool;
-import com.waiXiao.common.utils.PagingUtil;
 import com.waiXiao.pojo.StudentInfoVo;
 import com.waiXiao.service.StudentService;
 import org.apache.commons.logging.Log;
@@ -14,7 +12,6 @@ import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,7 +20,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -53,7 +49,7 @@ public class StudentController {
 	public ModelAndView goToStudentInfo(ModelAndView model){
 		try {
 			model.addObject("userName","admin");
-			model.setViewName("theBackGround/actionPage/studentInfo");
+			model.setViewName("actionPage/studentInfo");
 		} catch (Exception e) {
             LOG.error(e.getMessage());
 			//e.printStackTrace();
@@ -90,7 +86,7 @@ public class StudentController {
 	* @return :     
 	*/
 	@RequestMapping("/importAll")
-	public Map<String,Object> importAll(@RequestParam("importAll") MultipartFile importAllFile){
+	public Map<String,Object> importAll(@RequestParam("file") MultipartFile importAllFile){
 		Map<String,Object> returnMap = new HashMap<>();
 		List<StudentInfoVo> studentInfoList = new ArrayList<>();
 		try {

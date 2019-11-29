@@ -31,6 +31,10 @@ public class StudentServiceImpl implements StudentService {
         int total = studentInfoVoMapper.selectStudentCountByParam(paramMap);
         returnMap.put("rows",rows);
         returnMap.put("total",total);
+        returnMap.put("msg", "success");
+        returnMap.put("code", "0");
+        returnMap.put("data", rows);
+        returnMap.put("count", total);
         return returnMap;
     }
 

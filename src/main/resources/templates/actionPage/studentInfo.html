@@ -1,0 +1,92 @@
+<#assign ctx=request.getContextPath()>
+<#include "/header.html"/>
+  
+  <body>
+    <div class="x-nav">
+      <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right" href="javascript:location.replace(location.href);" title="刷新">
+        <i class="layui-icon" style="line-height:30px">ဂ</i></a>
+    </div>
+    <div class="x-body">
+      <div class="layui-row">
+        <form class="layui-form layui-col-md12 x-so">
+          <input class="layui-input" placeholder="开始日" name="start" id="start">
+          <input class="layui-input" placeholder="截止日" name="end" id="end">
+          <div class="layui-input-inline">
+            <select name="contrller">
+              <option value="" selected="selected">--请选择性别--</option>
+              <option value="1">男</option>
+              <option value="2">女</option>
+              <option value="0">其他</option>
+            </select>
+          </div>
+          <div class="layui-input-inline">
+            <select name="contrller">
+              <option value="" selected="selected">--请选择年龄--</option>
+              <option value="8">8</option>
+              <option value="9">9</option>
+              <option value="10">10</option>
+              <option value="11">11</option>
+            </select>
+          </div>
+          <input type="text" name="studentName"  placeholder="姓名" autocomplete="off" class="layui-input">
+          <button class="layui-btn"  lay-submit="" lay-filter="sreach"><i class="layui-icon">&#xe615;</i></button>
+          <button type="button" class="layui-btn" id="upload"><i class="layui-icon"></i>上传文件</button>
+        </form>
+      </div>
+      <table class="layui-hide" id="tableId"></table>
+    </div>
+    <script>
+        layui.use('table', function(){
+            var table = layui.table;
+            table.render({
+                elem: '#tableId'
+                ,url:'/student/selectStudentByParam.html'
+                ,cellMinWidth: 80
+                ,page: {
+                    layout: ['limit', 'count', 'prev', 'page', 'next', 'skip'] //自定义分页布局
+                    ,curr: 1 //设定初始在第 1 页
+                    ,groups: 2 //只显示 2 个连续页码
+                    ,first: '首页' //显示首页
+                    ,last: '尾页' //显示尾页
+                }
+                ,cols: [[
+                    {field:'studentNum', title: '学号', sort: true}
+                    ,{field:'studentName',title: '姓名'}
+                    ,{field:'sex',title: '性别', sort: true}
+                    ,{field:'national',title: '民族'}
+                    ,{field:'birthday', title: '出生日期'}
+                    ,{field:'age', title: '年龄', sort: true}
+                    ,{field:'guardian', title: '监护人'}
+                    ,{field:'guardianPhone', title: '监护人电话'}
+                    ,{field:'homeAddress',title: '家庭地址'}
+                    ,{field:'remark',title: '备注'}
+                ]]
+            });
+        });
+        //上传
+        layui.use('upload', function() {
+            var $ = layui.jquery
+                , upload = layui.upload;
+            //指定允许上传的文件类型
+            upload.render({
+                elem: '#upload'
+                , url: '/student/importAll.html'
+                , accept: 'file' //普通文件
+                , exts: 'xls'|'xlsx'
+                , before: function(obj){
+                    layer.load();
+                }
+                , done: function (data) {
+                    layer.closeAll('loading');
+                    if (data.success==1) {
+                        layer.msg(res.msg);
+                        window.location.reload();
+                    } else{
+                        layer.msg(res.msg);
+                    }
+                }
+            });
+        });
+    </script>
+  </body>
+</html>
