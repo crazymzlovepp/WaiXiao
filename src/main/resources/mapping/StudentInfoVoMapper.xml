@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.waiXiao.mapper.StudentInfoVoMapper" >
+  <resultMap id="BaseResultMap" type="com.waiXiao.pojo.StudentInfoVo" >
+    <id column="student_id" property="studentId" jdbcType="VARCHAR" />
+    <result column="student_num" property="studentNum" jdbcType="INTEGER" />
+    <result column="student_name" property="studentName" jdbcType="VARCHAR" />
+    <result column="sex" property="sex" jdbcType="INTEGER" />
+    <result column="national" property="national" jdbcType="VARCHAR" />
+    <result column="birthday" property="birthday" jdbcType="TIMESTAMP" />
+    <result column="age" property="age" jdbcType="INTEGER" />
+    <result column="home_address" property="homeAddress" jdbcType="VARCHAR" />
+    <result column="guardian" property="guardian" jdbcType="VARCHAR" />
+    <result column="guardian_phone" property="guardianPhone" jdbcType="VARCHAR" />
+    <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+    <result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from student_info
+    where student_id = #{studentId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.waiXiao.pojo.StudentInfoVo" >
+    insert into student_info (student_id, student_num, student_name, 
+      sex, national, birthday, 
+      age, home_address, guardian, 
+      guardian_phone, create_date, update_date, 
+      remark)
+    values (#{studentId,jdbcType=VARCHAR}, #{studentNum,jdbcType=INTEGER}, #{studentName,jdbcType=VARCHAR}, 
+      #{sex,jdbcType=INTEGER}, #{national,jdbcType=VARCHAR}, #{birthday,jdbcType=TIMESTAMP}, 
+      #{age,jdbcType=INTEGER}, #{homeAddress,jdbcType=VARCHAR}, #{guardian,jdbcType=VARCHAR}, 
+      #{guardianPhone,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, #{updateDate,jdbcType=TIMESTAMP}, 
+      #{remark,jdbcType=VARCHAR})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.waiXiao.pojo.StudentInfoVo" >
+    update student_info
+    set student_num = #{studentNum,jdbcType=INTEGER},
+      student_name = #{studentName,jdbcType=VARCHAR},
+      sex = #{sex,jdbcType=INTEGER},
+      national = #{national,jdbcType=VARCHAR},
+      birthday = #{birthday,jdbcType=TIMESTAMP},
+      age = #{age,jdbcType=INTEGER},
+      home_address = #{homeAddress,jdbcType=VARCHAR},
+      guardian = #{guardian,jdbcType=VARCHAR},
+      guardian_phone = #{guardianPhone,jdbcType=VARCHAR},
+      create_date = #{createDate,jdbcType=TIMESTAMP},
+      update_date = #{updateDate,jdbcType=TIMESTAMP},
+      remark = #{remark,jdbcType=VARCHAR}
+    where student_id = #{studentId,jdbcType=VARCHAR}
+  </update>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select student_id, student_num, student_name, sex, national, birthday, age, home_address, 
+    guardian, guardian_phone, create_date, update_date, remark
+    from student_info
+    where student_id = #{studentId,jdbcType=VARCHAR}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select student_id, student_num, student_name, sex, national, birthday, age, home_address, 
+    guardian, guardian_phone, create_date, update_date, remark
+    from student_info
+  </select>
+  <!--多条件查询学生信息-->
+  <select id="selectStudentByParam" resultMap="BaseResultMap" parameterType="java.lang.String">
+    select student_id, student_num, student_name, sex, national, birthday, age, home_address,
+    guardian, guardian_phone, create_date, update_date, remark
+    from student_info where 1=1
+    <if test="sex != null and sex != ''">
+      and sex = #{sex}
+    </if>
+    <if test="age != null and age != ''">
+      and age = #{age}
+    </if>
+    <if test="studentName != null and studentName != ''">
+      and student_name like concat ("%",#{studentName},"%")
+    </if>
+
+    <if test="birthdayTimeStart != null and birthdayTimeStart != ''">
+      and birthday &gt;= #{birthdayTimeStart}
+    </if>
+
+    <if test="birthdayTimeEnd != null and birthdayTimeEnd != ''">
+      and birthday &lt;= #{birthdayTimeStart}
+    </if>
+
+    <if test="pageNumber != null and pageSize !=null">
+      LIMIT ${(pageNumber-1)*pageSize}, ${pageSize}
+    </if>
+  </select>
+  <!--多条件查询学生信息总数-->
+  <select id="selectStudentCountByParam" resultType="java.lang.Integer" parameterType="java.lang.String">
+    select count(1)
+    from student_info where 1=1
+    <if test="sex != null and sex != ''">
+      and sex = #{sex}
+    </if>
+    <if test="age != null and age != ''">
+      and age = #{age}
+    </if>
+    <if test="studentName != null and studentName != ''">
+      and student_name like concat ("%",#{studentName},"%")
+    </if>
+
+    <if test="birthdayTimeStart != null and birthdayTimeStart != ''">
+      and birthday &gt;= #{birthdayTimeStart}
+    </if>
+
+    <if test="birthdayTimeEnd != null and birthdayTimeEnd != ''">
+      and birthday &lt;= #{birthdayTimeStart}
+    </if>
+  </select>
+  <!--批量导入学生信息-->
+  <insert id="insertStudentByList" parameterType="java.util.List">
+  insert into student_info (student_id, student_num, student_name,
+      sex, national, birthday,
+      age, home_address, guardian,
+      guardian_phone, create_date, update_date,
+      remark)
+    values 
+    <foreach collection="list" item="vo" index="index" separator=",">
+      (#{vo.studentId}, #{vo.studentNum}, #{vo.studentName},
+      #{vo.sex}, #{vo.national}, #{vo.birthday},
+      #{vo.age}, #{vo.homeAddress}, #{vo.guardian},
+      #{vo.guardianPhone}, #{vo.createDate}, #{vo.updateDate},
+      #{vo.remark})
+    </foreach>
+  </insert>
+</mapper>

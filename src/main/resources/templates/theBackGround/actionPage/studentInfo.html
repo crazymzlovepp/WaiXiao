@@ -1,0 +1,349 @@
+<#assign ctx=request.getContextPath()>
+<#include "../../theBackGround-header.html"/>
+<div class="row">
+    <div class="panel-body col-xs-12">
+        <form action="" class="form-horizontal row-border" autocomplete="off">
+            性别
+            <select id="sex_search">
+                <option value="" selected="selected">--请选择性别--</option>
+                <option value="1">男</option>
+                <option value="2">女</option>
+                <option value="0">其他</option>
+            </select>
+            年龄
+            <select id="age_search">
+                <option value="" selected="selected">--请选择年龄--</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+                <option value="11">11</option>
+            </select>
+            出生日期
+            <input id="birthdayTimeStart_search" class="dataInput-left" placeholder="开始日期" onfocus="this.blur()"
+                   onClick="WdatePicker({dateFmt:'yyyy-MM-dd' ,maxDate:'#F{$dp.$D(\'birthdayTimeEnd_search\')}'})">
+            <span class="dataInput-dvision">-</span>
+            <input id="birthdayTimeEnd_search" class="dataInput-right" placeholder="结束日期" onfocus="this.blur()"
+                   onclick="WdatePicker({dateFmt:'yyyy-MM-dd' ,minDate:'#F{$dp.$D(\'birthdayTimeStart_search\')}'});" />
+            姓名
+            <input type="text" id="name_search">
+            <a class="btn btn-success-alt btn-sm"
+               style="margin-left:10px;float:left;" onclick="searchData('/student/selectStudentByParam.html')" data-type="btn-search">
+                <i class="fa fa-search"></i>
+            </a>
+        </form>
+    </div>
+    <div class="panel-body" id="contentid">
+        <div class="form-group">
+            <div class="col-sm-12">
+                <input id="importAll" name="importAll" type="file" value="上传"/>
+            </div>
+        </div>
+        <div id="toolbar" class="button-group" style="float:right">
+            <button type="button" class="button button-pill button-small button-primary" onclick="addData()">新增</button>
+            <button type="button" class="button button-pill button-small button-primary" onclick="beforeEdit()">编辑</button>
+            <button type="button" class="button button-pill button-small button-primary" onclick="deleteData()">删除</button>
+        </div>
+        <table id="studentTable">
+        </table>
+    </div>
+</div><!-- /.col -->
+</div><!-- /.row -->
+<#include "../../theBackGround-footer.html"/>
+<script type="text/javascript">
+    var url = "/student/selectStudentByParam.html";
+    $(function(){
+        searchData(url);
+    });
+    //查询数据
+    function searchData(url){
+        $("#studentTable").bootstrapTable('destroy').bootstrapTable({
+            url: url,
+            pagination: true,
+            pageSize: 25,
+            pageList: [25,50,75,100],
+            sidePagination: "server",
+            striped:true,
+            clickToSelect: true,
+            showExport:true,
+            exportDataType:'all',
+            exportTypes:['excel'],
+            exportOptions:{
+                ignoreColumn: [0],  //忽略某一列的索引
+                fileName: '三二班学生信息',  //文件名称设置
+                worksheetName: 'sheet1',  //表格工作区名称
+                tableName: '三二班学生信息',
+                excelstyles: ['background-color', 'color', 'font-size', 'font-weight']
+            },
+            toolbar: "#toolbar",
+            locale: "zh-CN",
+            queryParams: function (params) {
+                return {
+                    sex:$("#sex_search").val(),
+                    birthdayTimeStart:$("#birthdayTimeStart_search").val(),
+                    birthdayTimeEnd:$("#birthdayTimeEnd_search").val(),
+                    age:$("#age_search").val(),
+                    studentName:$("#name_search").val(),
+                    pageSize: params.limit,
+                    pageNumber: params.offset,
+                    sortOrder: params.order,
+                    sortName: params.sort
+                }
+            },
+            columns: [{
+                field: 'Number',
+                title: '序号',
+                align: "center",
+                width:'3%',
+                formatter: function (value, row, index) {
+                    return index + 1;
+                }
+            },{
+                field: 'studentNum',
+                title: '学号',
+                sortable:true,
+                align: "center"
+
+            },{
+                field: 'studentName',
+                title: '姓名',
+                align: "center"
+            },{
+                field: 'sex',
+                title: '性别',
+                sortable:true,
+                align: "center",
+                formatter: function (value, row, index) {
+                    if(value != null){
+                        if(value == "1"){//1男2女0其他
+                            return "男";
+                        }else if(value == "2"){
+                            return "女";
+                        }else{
+                            return "其他";
+                        }
+                    }
+                }
+            },{
+                field: 'national',
+                title: '民族',
+                align: "center"
+            },{
+                field: 'birthday',
+                title: '出生日期',
+                sortable:true,
+                align: "center",
+                formatter: function (value, row, index) {
+                    if(value != null && value != "" && value != undefined && value != "undefined"){
+                        return wDateFormat(new Date(value), "yyyy-MM-dd")
+                    }else{
+                        return value;
+                    }
+                }
+            },{
+                field: 'age',
+                title: '年龄',
+                sortable:true,
+                align: "center"
+            },{
+                field: 'guardian',
+                title: '监护人',
+                align: "center"
+            },{
+                field: 'guardianPhone',
+                title: '监护人电话',
+                align: "center"
+            },{
+                field: 'homeAddress',
+                title: '家庭住址',
+                align: "center"
+            },{
+                field: 'remark',
+                title: '备注',
+                align: "center"
+            }
+            ]
+        });
+    }
+
+    //实际新增数据
+    function addData(){
+        $("#add_form_id").css("display","");
+        bootbox.confirm({
+            title: "新增学生信息",
+            message: $("#add_form_id"),
+            buttons: {
+                confirm: {
+                    label: 'Yes',
+                    className: 'btn-success'
+                },
+                cancel: {
+                    label: 'No',
+                    className: 'btn-danger'
+                }
+            },
+            callback: function (result) {
+                var vo = $('#add_form_id').serializeJSON();
+                if(result == true){
+                    $.ajax({
+                        url:"/movieManage/addOrUpdateMovie.html",
+                        dataType:"json",
+                        method:"post",
+                        data:{vo:vo},
+                        success:function(data){
+                            if(data!= null && data.status == true){
+                                bootbox.alert({
+                                    message: "新增数据成功！",
+                                    size: 'small'
+                                });
+                                searchData("/movieManage/selectAllMovieByParam.html");
+                            }else{
+                                bootbox.alert({
+                                    message: "新增数据失败！",
+                                    size: 'small'
+                                });
+                            }
+                        }
+                    })
+                }
+            }
+        });
+    }
+    //编辑数据前选中行
+    function beforeEdit(){
+        var selectRow =  $('#movieTable').bootstrapTable('getSelections');
+        if(selectRow == null || selectRow == ''||selectRow.length>1){
+            bootbox.alert({
+                message: "仅能选择一条要编辑的记录！",
+                size: 'small'
+            });
+        }else {
+            $("#movieId_edit").val(selectRow[0].movieId);
+            $("#movieName_edit").val(selectRow[0].movieName);
+            $("#downLoadHref_edit").val(selectRow[0].downLoadHref);
+            $("#imgUrl_edit").val(selectRow[0].imgUrl);
+            $("#imgUrl2_edit").val(selectRow[0].imgUrl2);
+            $("#source").val(selectRow[0].source);
+            $("#produceYear_edit").val(selectRow[0].produceYear);
+            $("#produceCountry_edit").val(selectRow[0].produceCountry);
+            $("#describes_edit").val(selectRow[0].describes);
+            $("#edit_form_id").css("display","");
+            bootbox.confirm({
+                title: "确定修改当前数据?",
+                message: $("#edit_form_id"),
+                buttons: {
+                    confirm: {
+                        label: 'Yes',
+                        className: 'btn-success'
+                    },
+                    cancel: {
+                        label: 'No',
+                        className: 'btn-danger'
+                    }
+                },
+                callback: function (result) {
+                    var vo = $('#edit_form_id').serializeJSON();
+                    if(result == true){
+                        $.ajax({
+                            url:"/movieManage/addOrUpdateMovie.html",
+                            dataType:"json",
+                            method:"post",
+                            data:{vo:vo},
+                            success:function(data){
+                                if(data!= null && data.status == true){
+                                    bootbox.alert({
+                                        message: "编辑数据成功！",
+                                        size: 'small'
+                                    });
+                                    searchData("/movieManage/selectAllMovieByParam.html");
+                                }else{
+                                    bootbox.alert({
+                                        message: "编辑数据失败！",
+                                        size: 'small'
+                                    });
+                                }
+                            }
+                        })
+                    }
+                }
+            });
+        }
+    }
+
+    //删除
+    function deleteData(){
+        var selectRow =  $('#movieTable').bootstrapTable('getSelections');
+        if(selectRow == null || selectRow == ''){
+            bootbox.alert({
+                message: "请先选择要删除的数据！",
+                size: 'small'
+            });
+        }else {
+            var ids = new Array();
+            for(var i = 0;i < selectRow.length; i++) {
+                ids.push(selectRow[i].movieId);
+            }
+            ids = ids.join(",");
+            bootbox.confirm({
+                message: "确定要删除选择的数据吗?",
+                buttons: {
+                    confirm: {
+                        label: 'Yes',
+                        className: 'btn-success'
+                    },
+                    cancel: {
+                        label: 'No',
+                        className: 'btn-danger'
+                    }
+                },
+                callback: function (result) {
+                    if(result == true){
+                        $.ajax({
+                            type: "POST",
+                            url: "/movieManage/deleteMovie.html",
+                            data: {ids:ids},
+                            dataType: "json",
+                            success:function(data){
+                                if(data.status != null && data.status == true){
+                                    bootbox.alert({
+                                        message: "删除数据成功！",
+                                        size: 'small'
+                                    });
+                                    searchData("/movieManage/selectAllMovieByParam.html");
+                                }else{
+                                    bootbox.alert({
+                                        message: "删除数据失败！",
+                                        size: 'small'
+                                    });
+                                }
+                            }
+                        })
+                    }
+                }
+            });
+        }
+    }
+
+    //批量导入
+    $("#importAll").fileinput({
+        language: 'zh', //设置语言
+        uploadUrl:"/student/importAll.html", //上传的地址
+        allowedFileExtensions: ['jpg', 'gif', 'png','xlsx','xls'],//接收的文件后缀
+        uploadAsync: true, //默认异步上传
+        showUpload:true, //是否显示上传按钮
+        showRemove :true, //显示移除按钮
+        uploadLabel: "上传",//设置整体上传按钮的汉字
+        removeLabel: "移除",//设置整体删除按钮的汉字
+        browseLabel: "选择文件",//选择按钮的汉字
+        showPreview :false, //是否显示预览
+        showCaption:true,//是否显示标题
+        autoReplace:true,//再次选择文件则替换之前的文件
+        browseClass:"btn btn-primary", //按钮样式
+        dropZoneEnabled: true,//是否显示拖拽区域
+        maxFileCount:1, //表示允许同时上传的最大文件个数
+        enctype:'multipart/form-data',
+        validateInitialCount:true,
+        msgFilesTooMany: "选择上传的文件数量({n}) 超过允许的最大数值{m}！"
+    }).on("fileuploaded", function (event, data, previewId, index){
+        searchData(url);
+    });
+</script>

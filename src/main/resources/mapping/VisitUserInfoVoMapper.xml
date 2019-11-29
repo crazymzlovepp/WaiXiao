@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.waiXiao.mapper.VisitUserInfoVoMapper" >
+  <resultMap id="BaseResultMap" type="com.waiXiao.pojo.VisitUserInfoVo" >
+    <result column="id" property="id" jdbcType="VARCHAR" />
+    <result column="userName" property="username" jdbcType="VARCHAR" />
+    <result column="source" property="source" jdbcType="VARCHAR" />
+    <result column="ip" property="ip" jdbcType="VARCHAR" />
+    <result column="ip_address" property="ipAddress" jdbcType="VARCHAR" />
+    <result column="host_name" property="hostName" jdbcType="VARCHAR" />
+    <result column="visit_date" property="visitDate" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <insert id="insert" parameterType="com.waiXiao.pojo.VisitUserInfoVo" >
+    insert into visit_user_info (id, userName, source, 
+      ip, ip_address, host_name, 
+      visit_date)
+    values (#{id,jdbcType=VARCHAR}, #{username,jdbcType=VARCHAR}, #{source,jdbcType=VARCHAR}, 
+      #{ip,jdbcType=VARCHAR}, #{ipAddress,jdbcType=VARCHAR}, #{hostName,jdbcType=VARCHAR}, 
+      #{visitDate,jdbcType=TIMESTAMP})
+  </insert>
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select id, userName, source, ip, ip_address, host_name, visit_date
+    from visit_user_info
+  </select>
+  <!--根据用户名查询最近十次登录信息-->
+  <select id="selectTheLastTenVisitsByUserName" resultMap="BaseResultMap" parameterType="java.lang.String">
+    <if test="userName != null and userName != ''">
+      select id, userName, source, ip, ip_address, host_name, visit_date
+      from visit_user_info where userName = #{userName} order by visit_date desc limit 0,10
+    </if>
+  </select>
+  <!--根据用户名查询所有登录次数-->
+  <select id="selectAllVisitNumsByUserName" resultType="int" parameterType="java.lang.String">
+  <if test="userName != null and userName != ''">
+  select count(1)
+  from visit_user_info where userName = #{userName}
+  </if>
+  </select>
+  <!--查询系统当日首页访问量   访问ip去重总数-->
+  <select id="selectTotalVisitOfToday" resultType="int">
+      select count(distinct(vui.ip)) from visit_user_info vui where vui.source ='1' and left(vui.visit_date,10) = left(now(),10)
+  </select>
+  <!--多条件查询访问者总条数-->
+  <select id="selectAllVisitInfoCountByParam" resultType="int" parameterType="map">
+    select count(1) from visit_user_info vui where 1=1
+    <if test="source != null and source != ''">
+      and source = #{source}
+    </if>
+    <if test="ip != null and ip != ''">
+      and ip like concat("%",#{ip},"%")
+    </if>
+    <if test="visitTimeStart != null and visitTimeStart != ''">
+      and visit_date &gt; #{visitTimeStart}
+    </if>
+    <if test="visitTimeEnd != null and visitTimeEnd != ''">
+      and visit_date &lt; #{visitTimeEnd}
+    </if>
+  </select>
+  <!--多条件查询访问者详细信息-->
+  <select id="selectAllVisitInfoByParam" resultMap="BaseResultMap" parameterType="map">
+    select id , userName, ip, ip_address, host_name, visit_date,
+    case when source = "1" then "首页" else "后台" end as source
+    from visit_user_info vui
+    where 1=1
+    <if test="source != null and source != ''">
+        and source = #{source}
+    </if>
+    <if test="ip != null and ip != ''">
+      and ip like concat("%",#{ip},"%")
+    </if>
+    <if test="visitTimeStart != null and visitTimeStart != ''">
+        and visit_date &gt; #{visitTimeStart}
+    </if>
+    <if test="visitTimeEnd != null and visitTimeEnd != ''">
+        and visit_date &lt; #{visitTimeEnd}
+    </if>
+    order by visit_date desc
+    <if test="currentPage != null and pageSize !=null">
+      LIMIT ${(currentPage-1)*pageSize}, ${pageSize}
+    </if>
+  </select>
+</mapper>

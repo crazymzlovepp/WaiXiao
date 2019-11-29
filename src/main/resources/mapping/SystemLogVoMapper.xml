@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.waiXiao.mapper.SystemLogVoMapper" >
+  <resultMap id="BaseResultMap" type="com.waiXiao.pojo.SystemLogVo" >
+    <result column="log_id" property="logId" jdbcType="VARCHAR" />
+    <result column="log_name" property="logName" jdbcType="VARCHAR" />
+    <result column="log_content" property="logContent" jdbcType="VARCHAR" />
+    <result column="log_level" property="logLevel" jdbcType="VARCHAR" />
+    <result column="log_create_date" property="logCreateDate" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <insert id="insert" parameterType="com.waiXiao.pojo.SystemLogVo" >
+    insert into system_log (log_id, log_name, log_content, 
+      log_level, log_create_date)
+    values (#{logId,jdbcType=VARCHAR}, #{logName,jdbcType=VARCHAR}, #{logContent,jdbcType=VARCHAR}, 
+      #{logLevel,jdbcType=VARCHAR}, #{logCreateDate,jdbcType=TIMESTAMP})
+  </insert>
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select log_id, log_name, log_content, log_level, log_create_date
+    from system_log
+  </select>
+  <!--多条件查询系统日志总数-->
+  <select id="selectAllSystemLogCountInfoByParam" resultType="int" parameterType="map">
+    select count(1)
+    from system_log
+    where 1=1
+    <if test="startTime != null and startTime != ''">
+      and log_create_date &gt; #{startTime}
+    </if>
+    <if test="endTime != null and endTime != ''">
+      and log_create_date &lt; #{endTime}
+    </if>
+  </select>
+  <!--多条件查询系统日志详细列表-->
+  <select id="selectAllSystemLogInfoByParam" resultMap="BaseResultMap" parameterType="map">
+    select log_id, log_name, log_content, log_level, log_create_date
+    from system_log where 1=1
+    <if test="startTime != null and startTime != ''">
+      and log_create_date &gt; #{startTime}
+    </if>
+    <if test="endTime != null and endTime != ''">
+      and log_create_date &lt; #{endTime}
+    </if>
+    order by log_create_date desc
+    <if test="currentPage != null and pageSize !=null">
+      LIMIT ${(currentPage-1)*pageSize}, ${pageSize}
+    </if>
+  </select>
+</mapper>
