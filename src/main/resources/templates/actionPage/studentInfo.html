@@ -41,25 +41,40 @@
             table.render({
                 elem: '#tableId'
                 ,url:'/student/selectStudentByParam.html'
-                ,cellMinWidth: 80
                 ,page: {
                     layout: ['limit', 'count', 'prev', 'page', 'next', 'skip'] //自定义分页布局
                     ,curr: 1 //设定初始在第 1 页
                     ,groups: 2 //只显示 2 个连续页码
                     ,first: '首页' //显示首页
                     ,last: '尾页' //显示尾页
+                    ,limits:[25,50,75]
+                    ,limit:25
                 }
                 ,cols: [[
-                    {field:'studentNum', title: '学号', sort: true}
-                    ,{field:'studentName',title: '姓名'}
-                    ,{field:'sex',title: '性别', sort: true}
-                    ,{field:'national',title: '民族'}
-                    ,{field:'birthday', title: '出生日期'}
-                    ,{field:'age', title: '年龄', sort: true}
-                    ,{field:'guardian', title: '监护人'}
-                    ,{field:'guardianPhone', title: '监护人电话'}
-                    ,{field:'homeAddress',title: '家庭地址'}
-                    ,{field:'remark',title: '备注'}
+                    {field:'studentNum', title: '学号', sort: true,width:"7%",align:"center"}
+                    ,{field:'studentName',title: '姓名',width:"7%",align:"center"}
+                    ,{field:'sex',title: '性别', sort: true,width:"7%",align:"center",
+                        templet: function(data){
+                            if(data.sex == '1'){
+                                return "男";
+                            }else if(data.sex == '2'){
+                                return "女";
+                            }else{
+                                return "其他";
+                            }
+                        }}
+                    ,{field:'national',title: '民族',width:"7%",align:"center"}
+                    ,{field:'birthday', title: '出生日期',sort: true,width:"11%",align:"center",
+                          templet: function(data){
+                              if(data.birthday != null && data.birthday != ''){
+                                  return dateUtil(data.birthday,"yyyy-MM-dd");
+                              }
+                          }}
+                    ,{field:'age', title: '年龄', sort: true,width:"7%",align:"center"}
+                    ,{field:'guardian', title: '监护人',width:"7%",align:"center"}
+                    ,{field:'guardianPhone', title: '监护人电话',width:"12%",align:"center"}
+                    ,{field:'homeAddress',title: '家庭地址',width:"28%",align:"center"}
+                    ,{field:'remark',title: '备注',width:"12%",align:"center"}
                 ]]
             });
         });

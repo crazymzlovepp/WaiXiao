@@ -151,8 +151,8 @@ public class StudentController {
 	}
 
 	private Date getBirthday(String value) throws Exception{
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-mm-dd");
-		SimpleDateFormat sdf1 = new SimpleDateFormat("yyyymmdd");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		SimpleDateFormat sdf1 = new SimpleDateFormat("yyyyMMdd");
 		Date date = null;
 		if(value == null){
 			return date;
