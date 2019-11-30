@@ -31,7 +31,13 @@
           <button type="button" class="layui-btn" id="upload"><i class="layui-icon"></i>上传文件</button>
         </form>
       </div>
-      <table class="layui-hide" id="tableId"></table>
+      <div id="toobar">
+        <a class="layui-btn layui-btn-sm" lay-event="detail">查看</a>
+        <a class="layui-btn layui-btn-sm" lay-event="edit">编辑</a>
+        <a class="layui-btn layui-btn-danger layui-btn-sm" lay-event="del">删除</a>
+      </div>
+      <table class="layui-hide" id="tableId">
+      </table>
     </div>
   </body>
 <script>
