@@ -1,9 +1,11 @@
 package com.waiXiao.pojo;
 
+import com.waiXiao.common.BasePageUtil;
+
 import java.io.Serializable;
 import java.util.Date;
 
-public class StudentInfoVo implements Serializable {
+public class StudentInfoVo extends BasePageUtil implements Serializable {
     private String studentId;
 
     private Integer studentNum;

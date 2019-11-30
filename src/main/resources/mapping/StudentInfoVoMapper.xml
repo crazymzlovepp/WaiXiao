@@ -82,8 +82,8 @@
       and birthday &lt;= #{birthdayTimeStart}
     </if>
 
-    <if test="pageNumber != null and pageSize !=null">
-      LIMIT ${(pageNumber-1)*pageSize}, ${pageSize}
+    <if test="page != null and limit !=null">
+      LIMIT ${(page-1)*limit}, ${limit}
     </if>
   </select>
   <!--多条件查询学生信息总数-->

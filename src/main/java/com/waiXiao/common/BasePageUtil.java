@@ -11,25 +11,25 @@ import java.io.Serializable;
  * @return :
  */
 public class BasePageUtil implements Serializable {
-    private int pageSize = 20;//每页20条
-    private int pageNumber = 1;//当前页
+    private int limit = 20;//每页20条
+    private int page = 1;//当前页
     private String sortOrder;
     private String sortName;
 
-    public int getPageSize() {
-        return pageSize;
+    public int getLimit() {
+        return limit;
     }
 
-    public void setPageSize(int pageSize) {
-        this.pageSize = pageSize;
+    public void setLimit(int limit) {
+        this.limit = limit;
     }
 
-    public int getPageNumber() {
-        return pageNumber;
+    public int getPage() {
+        return page;
     }
 
-    public void setPageNumber(int pageNumber) {
-        this.pageNumber = pageNumber;
+    public void setPage(int page) {
+        this.page = page;
     }
 
     public String getSortOrder() {
