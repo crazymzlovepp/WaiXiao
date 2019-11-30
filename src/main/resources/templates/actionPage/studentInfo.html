@@ -24,8 +24,6 @@
               <option value="" selected="selected">--请选择年龄--</option>
               <option value="8">8</option>
               <option value="9">9</option>
-              <option value="10">10</option>
-              <option value="11">11</option>
             </select>
           </div>
           <input type="text" id="studentName" name="studentName"  placeholder="姓名" autocomplete="off" class="layui-input">
@@ -37,9 +35,14 @@
     </div>
   </body>
 <script>
-    //初始化
-    layui.use('table', function(){
-        layui.table.render({
+    //渲染表格
+    function initData(table) {
+        var sex = $("#sex").val();
+        var age = $("#age").val();
+        var studentName = $("#studentName").val();
+        var birthdayTimeStart = $("#birthdayTimeStart").val();
+        var birthdayTimeEnd = $("#birthdayTimeEnd").val();
+        table.render({
             elem: '#tableId'
             ,url:'/student/selectStudentByParam.html'
             ,page: {
@@ -50,6 +53,13 @@
                 ,last: '尾页' //显示尾页
                 ,limits:[25,50,75]
                 ,limit:25
+            },
+            where: {
+                sex:sex,
+                age:age,
+                studentName:studentName,
+                birthdayTimeStart:birthdayTimeStart,
+                birthdayTimeEnd:birthdayTimeEnd
             }
             ,cols: [[
                 {field:'studentNum', title: '学号', sort: true,width:"7%",align:"center"}
@@ -78,17 +88,25 @@
                 ,{field:'remark',title: '备注',width:"12%",align:"center"}
             ]]
         });
-    });
-    //查询
-    function searchData(){
-       var $ = layui.$;
-       var sex = $("#sex").value();
-       var age = $("#age").value();
-       var studentName = $("#studentName").value();
-       var birthdayTimeStart = $("#birthdayTimeStart").value();
-       var birthdayTimeEnd = $("#birthdayTimeEnd").value();
-       alert(sex)
     }
+
+    layui.use(['jquery','table', 'laydate', 'form' ], function(){
+        //初始化
+        initData(layui.table);
+
+        //日期
+        layui.laydate.render({
+            elem : '#birthdayTimeStart'
+        });
+        layui.laydate.render({
+            elem : '#birthdayTimeEnd'
+        });
+    });
+
+    //查询
+    $("#search").click(function () {
+        initData(layui.table);
+    });
 
     //上传
     layui.use('upload', function() {

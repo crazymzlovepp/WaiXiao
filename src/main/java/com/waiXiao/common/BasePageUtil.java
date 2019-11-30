@@ -11,7 +11,7 @@ import java.io.Serializable;
  * @return :
  */
 public class BasePageUtil implements Serializable {
-    private int limit = 20;//每页20条
+    private int limit = 25;//每页25条
     private int page = 1;//当前页
     private String sortOrder;
     private String sortName;
