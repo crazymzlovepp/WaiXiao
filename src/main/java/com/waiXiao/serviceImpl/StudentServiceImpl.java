@@ -29,8 +29,6 @@ public class StudentServiceImpl implements StudentService {
         Map<String, Object> returnMap = new HashMap<>();
         List<StudentInfoVo> rows = studentInfoVoMapper.selectStudentByParam(paramMap);
         int total = studentInfoVoMapper.selectStudentCountByParam(paramMap);
-        returnMap.put("rows",rows);
-        returnMap.put("total",total);
         returnMap.put("msg", "success");
         returnMap.put("code", "0");
         returnMap.put("data", rows);
